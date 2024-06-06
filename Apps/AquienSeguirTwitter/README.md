@@ -1,4 +1,4 @@
-#Replicacion de componente de Twitter, a quien seguir, realizada con React y javascript.
+#Replicacion de componente de Twitter, segerencias de a quien seguir, realizada con React y javascript.
 
 
 
