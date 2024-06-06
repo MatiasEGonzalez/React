@@ -1,4 +1,4 @@
-#Replicacion de TATETI con React y javaScript + almacenado en el LOCALSTORAGE
+#Ejemplo de TATETI con React y javaScript + almacenado en el LOCALSTORAGE
 
 
 
