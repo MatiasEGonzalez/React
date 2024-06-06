@@ -16,5 +16,12 @@
   "bugs": {
     "url": "https://github.com/MatiasEGonzalez/React/issues"
   },
-  "homepage": "https://github.com/MatiasEGonzalez/React#readme"
+  "homepage": "https://github.com/MatiasEGonzalez/React#readme",
+  "devDependencies": {
+    "standard": "^17.1.0"
+  },
+
+  "eslintConfig": {
+    "extends": "./node_modules/standard/esLintrc.json"
+  }
 }

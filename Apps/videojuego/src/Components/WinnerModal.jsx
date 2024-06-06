@@ -1,5 +1,7 @@
 import { Square } from "./Square"
 
+
+// eslint-disable-next-line react/prop-types
 export function WinnerModal ({ winner, resetGame}) {
     if (winner === null) return null
 
