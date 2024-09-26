@@ -28,6 +28,30 @@ import {
 } from '@/components/ui/dialog'
 import { Checkbox } from '@/components/ui/checkbox'
 
+// Tipos
+interface Cliente {
+  id: number
+  nombre: string
+  apellido: string
+  zona: string
+  estado: string
+  origen: string
+  contacto: string
+}
+
+interface Notificacion {
+  id: number
+  motivo: string
+  descripcion: string
+  agentes: number[]
+}
+
+interface NuevaNotificacion {
+  motivo: string
+  descripcion: string
+  agentes: number[]
+}
+
 const estadosCliente = [
   { valor: 'indefinido', etiqueta: 'Indefinido', color: 'bg-gray-200' },
   { valor: 'interesado', etiqueta: 'Interesado', color: 'bg-green-200' },
@@ -69,13 +93,13 @@ const zonas = ['Centro', 'Norte', 'Sur', 'Este', 'Oeste']
 
 export function CrmInmobiliario () {
   const [modoOscuro, setModoOscuro] = useState(false)
-  const [clientes, setClientes] = useState(clientesIniciales)
-  const [clientesFiltrados, setClientesFiltrados] = useState(clientesIniciales)
-  const [clienteEnEdicion, setClienteEnEdicion] = useState(null)
+  const [clientes, setClientes] = useState<Cliente[]>(clientesIniciales)
+  const [clientesFiltrados, setClientesFiltrados] = useState<Cliente[]>(clientesIniciales)
+  const [clienteEnEdicion, setClienteEnEdicion] = useState<Cliente | null>(null)
   const [mostrarDialogo, setMostrarDialogo] = useState(false)
   const [mostrarDialogoNotificacion, setMostrarDialogoNotificacion] = useState(false)
-  const [notificaciones, setNotificaciones] = useState([])
-  const [nuevaNotificacion, setNuevaNotificacion] = useState({ motivo: '', descripcion: '', agentes: [] })
+  const [notificaciones, setNotificaciones] = useState<Notificacion[]>([])
+  const [nuevaNotificacion, setNuevaNotificacion] = useState<NuevaNotificacion>({ motivo: '', descripcion: '', agentes: [] })
   const [busqueda, setBusqueda] = useState('')
   const [filtroZona, setFiltroZona] = useState('')
   const [filtroEstado, setFiltroEstado] = useState('')
@@ -104,7 +128,7 @@ export function CrmInmobiliario () {
     ))
   }
 
-  const editarCliente = (cliente: React.SetStateAction<null>) => {
+  const editarCliente = (cliente: Cliente | null) => {
     setClienteEnEdicion(cliente)
     setMostrarDialogo(true)
   }
@@ -113,7 +137,7 @@ export function CrmInmobiliario () {
     setClientes(clientes.filter(cliente => cliente.id !== id))
   }
 
-  const guardarCliente = (clienteEditado) => {
+  const guardarCliente = (clienteEditado: Cliente) => {
     if (clienteEditado.id) {
       setClientes(clientes.map(cliente =>
         cliente.id === clienteEditado.id ? clienteEditado : cliente
@@ -133,16 +157,16 @@ export function CrmInmobiliario () {
     }
   }
 
-  const FormularioCliente = ({ cliente, onGuardar }) => {
-    const [formData, setFormData] = useState(cliente || {
-      nombre: '', apellido: '', zona: '', estado: 'indefinido', origen: '', contacto: ''
+  const FormularioCliente = ({ cliente, onGuardar }: { cliente: Cliente | null, onGuardar: (cliente: Cliente) => void }) => {
+    const [formData, setFormData] = useState<Cliente>(cliente || {
+      id: 0, nombre: '', apellido: '', zona: '', estado: 'indefinido', origen: '', contacto: ''
     })
 
-    const handleChange = (e: { target: { name: unknown; value: unknown } }) => {
+    const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
       setFormData({ ...formData, [e.target.name]: e.target.value })
     }
 
-    const handleSubmit = (e: { preventDefault: () => void }) => {
+    const handleSubmit = (e: React.FormEvent) => {
       e.preventDefault()
       onGuardar(formData)
     }
@@ -311,8 +335,11 @@ export function CrmInmobiliario () {
                   <TableCell>
                     <DropdownMenu>
                       <DropdownMenuTrigger asChild>
-                        <Button variant='outline' className={`${estadosCliente.find(e => e.valor === cliente.estado).color} text-black`}>
-                          {estadosCliente.find(e => e.valor === cliente.estado).etiqueta}
+                        <Button
+                          variant='outline' className={`${estadosCliente.find(e => e.valor === cliente.estado)?.etiqueta || 'text-black'}`}
+                        >
+                          {estadosCliente.find(e => e.valor === cliente.estado)?.etiqueta || 'Etiqueta por defecto'}
+
                           <ChevronDown className='ml-2 h-4 w-4' />
                         </Button>
                       </DropdownMenuTrigger>
@@ -354,7 +381,8 @@ export function CrmInmobiliario () {
                     <h4 className='font-bold'>{notificacion.motivo}</h4>
                     <p>{notificacion.descripcion}</p>
                     <p className='text-sm text-gray-500 dark:text-gray-400 mt-2'>
-                      Enviado a: {notificacion.agentes.map(id => agentes.find(a => a.id === id).nombre).join(', ')}
+                      Enviado a: {notificacion.agentes.map(id => agentes.find(a => a.id === id)?.nombre || 'Desconocido').join(', ')}
+
                     </p>
                   </li>
                 ))}
